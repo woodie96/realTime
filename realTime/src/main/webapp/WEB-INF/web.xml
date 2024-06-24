@@ -30,4 +30,14 @@
 		<url-pattern>/</url-pattern>
 	</servlet-mapping>
 
+<!-- 	 <servlet>
+        <servlet-name>WebSocketServer</servlet-name>
+        <servlet-class>com.demo.test.WebSocketServer</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>WebSocketServer</servlet-name>
+        <url-pattern>/websocket</url-pattern>
+    </servlet-mapping> -->
+
+
 </web-app>
