@@ -23,33 +23,44 @@ import javax.websocket.server.ServerEndpoint;
  * */
 @ServerEndpoint("/websocket")
 public class WebSocketServer{
-	private static Set<Session> clients = 
-	        Collections.synchronizedSet(new HashSet<Session>());
+	/*
+	 * Set<T> 를 사용하는 이유 > 세션의 중복을 막기 위해서 사용
+	 * Set<T> 내부적으로  HashMap을 사용하여 구현되어있지만 HashMap은 키의 중복을 허용함
+	 * */
+	//웹 소켓 연결된 클라이언트의 세션을 관리하기 위한 것
+	private static Set<Session> clients = Collections.synchronizedSet(new HashSet<Session>());
 	
-	    @OnOpen
-	    public void onOpen(Session session) throws IOException {
-	        clients.add(session);
-	        System.out.println("New session opened: " + session.getId());
-	    }
+	//웹 소켓 연결된 클라이언트의 세션을 저장하기 위한 집합(Set) 객체.
+	//Session 객체는 웹 소켓 연결에 대한 정보를 가지고 있음
+	//Collections.synchronizedSet(new HashSet<Session>()) > clients 집합을 스레드 안전하게 만들기 위한 것
+	//HashSet은 동기화되지 않은 집합 구현체이므로, 멀티 스레드 환경에서 사용할 경우 데이터 경합(race condition) 문제가 발생할 수 있음
+	//Collections.synchronizedSet(...) 메서드를 사용하면 HashSet을 래핑하여 스레드 안전한 집합 구현체를 만들 수 있음
+
 	
-	    @OnClose
-	    public void onClose(Session session) throws IOException {
-	        clients.remove(session);
-	        System.out.println("Session closed: " + session.getId());
-	    }
-	
-	    @OnMessage
-	    public void onMessage(String message, Session session) throws IOException {
-	        System.out.println("Message received: " + message);
-	        for (Session client : clients) {
-	            if (!client.equals(session)) {
-	                client.getBasicRemote().sendText(message);
-	            }
-	        }
-	    }
-	
-	    @OnError
-	    public void onError(Session session, Throwable throwable) {
-	        System.out.println("Error: " + throwable.getMessage());
-	    }
+    @OnOpen
+    public void onOpen(Session session) throws IOException {
+        clients.add(session);
+        System.out.println("New session opened: " + session.getId());
+    }
+
+    @OnClose
+    public void onClose(Session session) throws IOException {
+        clients.remove(session);
+        System.out.println("Session closed: " + session.getId());
+    }
+
+    @OnMessage
+    public void onMessage(String message, Session session) throws IOException {
+        System.out.println("Message received: " + message);
+        for (Session client : clients) {
+            if (!client.equals(session)) {
+                client.getBasicRemote().sendText(message);
+            }
+        }
+    }
+
+    @OnError
+    public void onError(Session session, Throwable throwable) {
+        System.out.println("Error: " + throwable.getMessage());
+    }
 }

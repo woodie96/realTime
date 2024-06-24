@@ -7,8 +7,10 @@
         var ws;
 
         function connect() {
+        	//JavaScript 클라이언트에서 WebSocket 연결을 생성하는 코드
             ws = new WebSocket("ws://localhost:8080/websocket");
 
+            //연결 상태를 나타내는 readyState 속성을 가지고 있음
             ws.onopen = function() {
                 log('Connected');
             };
